@@ -11,10 +11,12 @@ import org.testng.annotations.Test;
 import tests.base.BaseTest;
 
 import java.util.Map;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class LoginTest extends BaseTest {
     private LoginPage loginPage;
-
+    private static final Logger logger = LogManager.getLogger(LoginPage.class);
     @BeforeMethod
     public void navigateToLoginPage() {
         driver.get("https://the-internet.herokuapp.com/login");
@@ -24,8 +26,10 @@ public class LoginTest extends BaseTest {
     @Test
     public void testValidLogin() {
         // This is a test;
-         Map<String,String>  testdata = ExcelDataUtil.getDataById("Sheet1","Login-01");
+        Map<String,String>  testdata = ExcelDataUtil.getDataById("Sheet1","Login-01");
         String userName = testdata.get("Username");
+        if (userName == null || userName.isEmpty())
+            logger.warn("Warning from Test: testValidLogin, userName does not have a value");
         loginPage.enterUsername(userName);
         loginPage.enterPassword(testdata.get("Password"));
         loginPage.clickLogin();
