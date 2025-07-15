@@ -68,7 +68,7 @@
                 <version>3.0.0</version> <!-- Or the version you are using -->
                 <configuration>
                     <suiteXmlFiles>
-                        <suiteXmlFile>testng-files/LoginTest.xml</suiteXmlFile>
+                        <suiteXmlFile>src/testng-files/LoginTest.xml</suiteXmlFile>
                     </suiteXmlFiles>
                 </configuration>
             </plugin>
