@@ -67,6 +67,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0</version> <!-- Or the version you are using -->
                 <configuration>
+                    <argLine>
+                        -Dchromeoptions.args=--start-maximized,--disable-extensions
+                    </argLine>
                     <suiteXmlFiles>
                         <suiteXmlFile>src/testng-files/LoginTest.xml</suiteXmlFile>
                     </suiteXmlFiles>
