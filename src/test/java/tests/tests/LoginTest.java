@@ -5,6 +5,8 @@ package tests.tests;
 import Resources.ExcelDataProviders;
 import Utils.ExcelDataUtil;
 import automation.pages.LoginPage;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -13,6 +15,7 @@ import tests.base.BaseTest;
 import java.util.Map;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import Utils.*;
 
 public class LoginTest extends BaseTest {
     private LoginPage loginPage;
@@ -25,21 +28,43 @@ public class LoginTest extends BaseTest {
 
     @Test
     public void testValidLogin() {
-        // This is a test;
-        Map<String,String>  testdata = ExcelDataUtil.getDataById("Sheet1","Login-01");
+        ExtentTest test = extentReports.createTest("Test Valid Login","To test valid log in to Salesforce Application").
+                assignCategory("Positive FlowTest").assignCategory("SmokeTest"); // Create test instance
+
+        Map<String, String> testdata = ExcelDataUtil.getDataById("Sheet1", "Login-01");
+
         String userName = testdata.get("Username");
-        if (userName == null || userName.isEmpty())
+
+        if (userName == null || userName.isEmpty()) {
             logger.warn("Warning from Test: testValidLogin, userName does not have a value");
+            test.log(Status.WARNING, "Username is null or empty in the test data."); // Log as warning
+        }
+         test.log(Status.INFO,"Started Entering values in input fields");
         loginPage.enterUsername(userName);
+        test.log(Status.INFO, "Entered username: " + userName); // Log username
+
         loginPage.enterPassword(testdata.get("Password"));
+        test.log(Status.INFO, "Entered password");
+
         loginPage.clickLogin();
+        test.log(Status.INFO, "Clicked login button");
+
         String message = loginPage.getFlashMessage();
-        Assert.assertTrue(message.contains("You logged into a secure area!"));
+        test.log(Status.INFO, "Flash message: " + message);
+
+        try {
+            Assert.assertTrue(message.contains("You logged into a secure area!"));
+            test.log(Status.PASS, "Login successful: Message contains 'You logged into a secure area!'"); // Log pass
+        } catch (AssertionError e) {
+            test.log(Status.FAIL, "Login failed: " + e.getMessage()); // Log fail
+            test.log(Status.FAIL, e); // Log the exception
+            Assert.fail("Login failed: " + e.getMessage()); //Re-throw the exception so that testng marks it as failed
+        }
     }
-
-
     @Test(dataProvider = "loginData",dataProviderClass = ExcelDataProviders.class )
     public void testValidLoginUsingDataProvider(Map<String, String> testdata) {
+        ExtentTest test = extentReports.createTest("Test Valid Login","To test valid log in to Salesforce Application").
+                assignCategory("DataProvider Test").assignCategory("Regression Test");
         navigateToLoginPage();
         String userName = testdata.get("Username");
         loginPage.enterUsername(userName);
