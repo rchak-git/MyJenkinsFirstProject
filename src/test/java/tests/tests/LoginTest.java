@@ -6,13 +6,17 @@ import Resources.ExcelDataProviders;
 import Utils.ExcelDataUtil;
 import automation.pages.LoginPage;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
+import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import tests.base.BaseTest;
 
+import java.io.File;
 import java.util.Map;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import Utils.*;
@@ -20,16 +24,23 @@ import Utils.*;
 public class LoginTest extends BaseTest {
     private LoginPage loginPage;
     private static final Logger logger = LogManager.getLogger(LoginPage.class);
+
+    private WebDriver driver;
+    protected ExtentTest test;
+
     @BeforeMethod
     public void navigateToLoginPage() {
-        driver.get("https://the-internet.herokuapp.com/login");
-        loginPage = new LoginPage(driver);
+        this.test = BaseTest.test.get();
+        this.driver = getDriver();
+        this.driver.get("https://the-internet.herokuapp.com/login");
+        loginPage = new LoginPage(this.driver);
     }
 
     @Test
+    @TestDescription("Test valid Login to the application")
     public void testValidLogin() {
-        ExtentTest test = extentReports.createTest("Test Valid Login","To test valid log in to Salesforce Application").
-                assignCategory("Positive FlowTest").assignCategory("SmokeTest"); // Create test instance
+
+        test.assignCategory("Positive FlowTest").assignCategory("SmokeTest"); // Create test instance
 
         Map<String, String> testdata = ExcelDataUtil.getDataById("Sheet1", "Login-01");
 
@@ -39,7 +50,7 @@ public class LoginTest extends BaseTest {
             logger.warn("Warning from Test: testValidLogin, userName does not have a value");
             test.log(Status.WARNING, "Username is null or empty in the test data."); // Log as warning
         }
-         test.log(Status.INFO,"Started Entering values in input fields");
+        test.log(Status.INFO, "Started Entering values in input fields");
         loginPage.enterUsername(userName);
         test.log(Status.INFO, "Entered username: " + userName); // Log username
 
@@ -53,24 +64,39 @@ public class LoginTest extends BaseTest {
         test.log(Status.INFO, "Flash message: " + message);
 
         try {
-            Assert.assertTrue(message.contains("You logged into a secure area!"));
+            Assert.assertTrue(message.contains("YouX logged into a secure area!"));
             test.log(Status.PASS, "Login successful: Message contains 'You logged into a secure area!'"); // Log pass
         } catch (AssertionError e) {
             test.log(Status.FAIL, "Login failed: " + e.getMessage()); // Log fail
             test.log(Status.FAIL, e); // Log the exception
-            Assert.fail("Login failed: " + e.getMessage()); //Re-throw the exception so that testng marks it as failed
+            String screenshotPath = ScreenshotUtil.captureScreenshot(driver, "testValidLogin");
+            System.out.println("Screenshot saved at: " + screenshotPath);
+
+
+            if (screenshotPath != null) {
+                // Convert absolute path to relative path if necessary
+               // String relativePath = new File(screenshotPath).getAbsolutePath();
+               // test.fail("Test failed", MediaEntityBuilder.createScreenCaptureFromPath(relativePath).build());
+                String screenshotName = "testValidLogin.png";
+                String relativePath = "../screenshots/" + screenshotName;
+                test.fail("Test failed", MediaEntityBuilder.createScreenCaptureFromPath(relativePath).build());
+
+            } else {
+                test.fail("Test failed, but screenshot could not be captured.");
+            }
         }
     }
-    @Test(dataProvider = "loginData",dataProviderClass = ExcelDataProviders.class )
+
+    @Test(dataProvider = "loginData", dataProviderClass = ExcelDataProviders.class)
     public void testValidLoginUsingDataProvider(Map<String, String> testdata) {
-        ExtentTest test = extentReports.createTest("Test Valid Login","To test valid log in to Salesforce Application").
+        extent.createTest("Test Valid Login", "To test valid log in to Salesforce Application").
                 assignCategory("DataProvider Test").assignCategory("Regression Test");
         navigateToLoginPage();
         String userName = testdata.get("Username");
         loginPage.enterUsername(userName);
         loginPage.enterPassword(testdata.get("Password"));
         loginPage.clickLogin();
-       // String message = loginPage.getFlashMessage();
-       // Assert.assertTrue(message.contains("You logged into a secure area!"));
+        // String message = loginPage.getFlashMessage();
+        // Assert.assertTrue(message.contains("You logged into a secure area!"));
     }
 }
