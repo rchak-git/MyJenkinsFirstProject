@@ -2,19 +2,19 @@
 pipeline {
     agent any
     stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/rchak-git/MyJenkinsFirstProject.git'
+            }
+        }
         stage('Build') {
             steps {
-                echo 'Building the application...'
+                bat 'mvn clean install'
             }
         }
         stage('Test') {
             steps {
-                echo 'Running tests...'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying the application...'
+                bat 'mvn test'
             }
         }
     }
