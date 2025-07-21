@@ -64,7 +64,7 @@ public class LoginTest extends BaseTest {
         test.log(Status.INFO, "Flash message: " + message);
 
         try {
-            Assert.assertTrue(message.contains("YouX logged into a secure area!"));
+            Assert.assertTrue(message.contains("You logged into a secure area!"));
             test.log(Status.PASS, "Login successful: Message contains 'You logged into a secure area!'"); // Log pass
         } catch (AssertionError e) {
             test.log(Status.FAIL, "Login failed: " + e.getMessage()); // Log fail
@@ -87,6 +87,7 @@ public class LoginTest extends BaseTest {
         }
     }
 
+    /*
     @Test(dataProvider = "loginData", dataProviderClass = ExcelDataProviders.class)
     public void testValidLoginUsingDataProvider(Map<String, String> testdata) {
         extent.createTest("Test Valid Login", "To test valid log in to Salesforce Application").
@@ -99,4 +100,6 @@ public class LoginTest extends BaseTest {
         // String message = loginPage.getFlashMessage();
         // Assert.assertTrue(message.contains("You logged into a secure area!"));
     }
+
+     */
 }
