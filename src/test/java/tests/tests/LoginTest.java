@@ -9,12 +9,14 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import tests.base.BaseTest;
 
 import java.io.File;
+import java.time.Duration;
 import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
@@ -33,6 +35,8 @@ public class LoginTest extends BaseTest {
         this.test = BaseTest.test.get();
         this.driver = getDriver();
         this.driver.get("https://the-internet.herokuapp.com/login");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(d -> d.getCurrentUrl().contains("https://the-internet.herokuapp.com/login"));
         loginPage = new LoginPage(this.driver);
     }
 
@@ -87,7 +91,7 @@ public class LoginTest extends BaseTest {
         }
     }
 
-    /*
+
     @Test(dataProvider = "loginData", dataProviderClass = ExcelDataProviders.class)
     public void testValidLoginUsingDataProvider(Map<String, String> testdata) {
         extent.createTest("Test Valid Login", "To test valid log in to Salesforce Application").
@@ -101,5 +105,5 @@ public class LoginTest extends BaseTest {
         // Assert.assertTrue(message.contains("You logged into a secure area!"));
     }
 
-     */
+
 }

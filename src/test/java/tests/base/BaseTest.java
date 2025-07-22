@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 public class BaseTest {
 
     // Thread-safe WebDriver for parallel execution
-    protected static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+    public static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
     // Thread-safe ExtentTest for parallel execution
     public static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
@@ -38,8 +38,7 @@ public class BaseTest {
          WebDriver webDriver = new ChromeDriver();
         webDriver.manage().window().maximize();
         driver.set(webDriver);
-
-        // Create a new ExtentTest instance for this test method
+       // Create a new ExtentTest instance for this test method
         test.set(extent.createTest(method.getName()));
     }
 
