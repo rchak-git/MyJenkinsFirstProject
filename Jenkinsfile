@@ -24,7 +24,7 @@ pipeline {
         stage('Publish HTML Report') {
             steps {
                 publishHTML(target: [
-                    reportName : 'Automation Test Report',
+                    reportName : 'Automation Test Report.html',
                     reportDir  : 'TestReports', // directory containing ExtentReport.html
                     reportFiles: 'ExtentReport.html',
                     keepAll    : true,
